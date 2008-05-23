@@ -1,0 +1,93 @@
+Mysql Setup instructions for Python2.5 / Leopard 10.5.2:
+--------------------------------------------------------
+- All information accurate at time of release
+- Steps are the same, version numbers probably have changed
+- This is a guide, you need to use your brain to figure things out
+- I will not answer any questions pertaining to installation / setup
+
+
+
+Install MySQL server for Leopard:
+---------------------------------
+- We need the binaries so they can be included in the python install
+- Download whichever version you wish from this site (I recommend the package
+  installer)
+
+  http://dev.mysql.com/downloads/mysql/5.0.html#macosx-dmg
+
+- Install like a normal Mac package:
+  - Install the main package (not the startupitem package)
+  - Install the prefpane package, if you want to run mysql server locally
+
+
+
+Extract Mysql-Python API:
+-------------------------
+- We are assuming the file is downloaded to ~/Desktop/
+- We are assuming the package name is MySQL-python-1.2.2.tar.gz
+- Download the latest source for mysql-python
+
+  http://sourceforge.net/projects/mysql-python/
+
+- Open a terminal window
+- Navigate to where you downloaded the file and extract the archive
+
+  cd ~/Desktop/
+  tar xfv MySQL-python-1.2.2.tar.gz
+
+
+
+Modify site.cfg for Mysql-Python API:
+-------------------------------------
+- Navigate to package directory, and edit site.cfg
+
+  cd ~/Desktop/MySQL-python-1.2.2/
+  open site.cfg -a TextEdit
+
+- Change the folowing line in the file (around line 13):
+
+  #mysql_config = /usr/local/bin/mysql_config
+  
+    TO:
+  
+  mysql_config = /usr/local/mysql/bin/mysql_config
+
+
+
+Modify _mysql.c for Mysql-Python API (compile bug fix):
+-------------------------------------------------------
+- This fixes a duplicate unsigned int definition error, and may be fixed in a
+  later package of MySQL-Python.  If you don't find it, it has been fixed.
+- Navigate to package directory, and edit _mysql.c
+
+  cd ~/Desktop/MySQL-python-1.2.2/
+  open _mysql.c -a TextEdit
+
+- Remove the following lines (37-39):
+
+    #ifndef uint
+    #define uint unsigned int
+    #endif
+
+
+
+Build Mysql-Python API Module:
+------------------------------
+- Nagivate to directory and build
+
+  cd ~/Desktop/MySQL-python-1.2.2/
+  python setup.py clean
+  python setup.py build
+  sudo python setup.py install
+  
+  - you can ignore any compile warnings
+  
+  
+
+Enjoy!
+------
+- you can now use mysql connectors in python, type the following in the python
+  interactive shell for more information!
+
+  import MySQLdb
+  help(MySQLdb)

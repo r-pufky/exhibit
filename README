@@ -1,0 +1,171 @@
+Exhibit by Robert Pufky (github.com/r-pufky):
+------------------------------------------------------
+Exhibit allows you to export your iPhoto Library meta-data to a SQL database, as
+well optionally uploading all of the photos contained within the library VIA 
+rsync over SSH.  The meta-data uploaded includes comments, ratings, modification
+dates, rolls (events), captions, keywords, filters, and much, much more.
+
+This is a developers tool and not an end-user product.  If you are looking for a
+open-box solution, this is not it.  Use .MAC.  This program is for those people
+(like me) who love iPhoto, but use Gallery or another media manager on their own
+web servers.
+
+This program was constructed with expandability and portability in mind.  This
+should be cross platform (i.e. if you want to process your AlbumData.xml files
+on the server, etc); and cross-database.  A template of the SQL connector used
+in this program is provided for those who want to write a postgres SQL, or other
+implementation.  If you do, please contact me (github.com/r-pufky) and I
+will add it to the package with full credit to you.
+
+Latest information and version can be found at:
+
+  http://www.crazymonkies.com/projects.php?type=exhibit
+
+
+
+Quick Instructions:
+-------------------
+- Extract files to desired location
+- Edit exhibit.config
+- ./exhibit -h  (for options to use)
+- Check further in this document for more usage information
+
+
+
+Installation:
+-------------
+- Extract to any location you wish
+- Edit exhibit.config for your specific options
+- Read "Specific Configurations" section (below) for specific information on 
+  setting up each type of module, with step-by-step instructions
+- If you would like, you can symlink the executable to a directory in your path
+  allowing you to run the command from anywhere in the system:
+  
+  ln -s [Exhibit Install Directory]/Exhibit.py [Directory In Your Path]/exhibit
+
+
+
+Specific Configurations:
+------------------------
+- SQL user account permissions
+
+  The user account that Exhibit uses must have the following permissions on the
+  database that the account has access to:
+
+  update, insert, delete, select, create table, drop table, truncate table
+
+- MySQLdb Module
+
+  This module is not included in the base leopard installation, and requires 
+  compiling from source to include it in a Leopard python2.5 install.  
+  Instructions on how to compile this for Leopard are located here:
+  
+    ./docs/mysql_setup.txt
+
+- SqlTemplate.py:
+
+  This is a template created specifically for those developers that want to
+  write a SQL interface for a different server.  More information can be found
+  in the template file, located here:
+  
+    ./docs/SqlTemplate.py
+  
+  If you do make a module for a different SQL server, please e-mail me 
+  (github.com/r-pufky) and I will include it in the next release of the 
+  program, with full credit to you.
+
+
+
+Usage:
+------
+First, although you should be able to run this while iPhoto is open, I would 
+recommend that you close iPhoto first; so that any changes that occur in iPhoto
+are committed to the AlbumData file.  This will minimize the risk of uploading
+already stale data.
+
+The easiest way to figure out how to use this program is by running the
+following command in the Exhibit directory:
+
+  ./exhibit --help
+
+The most typical commands are as follows:
+  
+  ./exhibit -f
+    - force re-create remote SQL database, and exports encoded images to local
+      directory, copying the data.  This is in the middle for performance, and 
+      also requires at least the size of your iPhoto Library in free space to 
+      export.
+  
+  ./exhibit -f -i
+    - force re-create remote SQL database, and exports encoded images to local
+      directory, using symlinks instead of moving data.  This is by far the 
+      fatest option, and allows you to move the encoded data anywhere you wish
+
+In the setup that I run at home, I have created a cronjob that runs every night
+running the following commands, which automatically updates my gallery with any
+changes in my iPhotoLibrary:
+
+  exhibit -f -i
+  rsync --update --size-only --copy-unsafe-links --compress --recursive 
+      --rsh='ssh -p 22' /tmp/exhibit/ myuser@myserver.example.com:/home/exhibit/
+
+
+
+Thumbnails:
+-----------
+In case you are wondering, the iPhoto thumbnail sizes are a max of 
+  - 360 pixels wide
+  - 360 pixels high
+  - If the main (Original) Image file is a video, the Thumbnail will be an image
+
+
+
+Testing Environment:
+--------------------
+This code has been completely tested on the following setup:
+- OS X Leopard (10.5.2)
+- MySql Server 5.0.51a-osx10.5-x86
+- Mysql-Python-1.2.2
+- Debian etch, running MySql Server 5.0.32-7etch5
+- All operations were executed on a remotely mounted filesystem, running gigabit
+  ethernet.
+
+Though it has not been tested on older versions, it will most likely work with
+them.
+
+
+
+Performance:
+------------
+This has been tested against a 16,000 item iPhoto Library, containing images and
+videos, all with associated keywords, special characters, ratings, comments, 
+etc.
+
+Each command was tested on the same enviroment multiple times, clearing any data
+before each run.  All operations were executed on a remotely mounted filesystem,
+running gigabit ethernet as the transport - numbers could be much faster if all
+operations were executed locally.
+
+exhibit -f -i:
+  2 minutes, 32 seconds
+
+exhibit -f:
+  19 minutes, 29 seconds
+  
+  
+  
+Help! It's Not Working:
+-----------------------
+If it is not working, I'd like to know.  I will need the following things to
+help you get this working for yourself:
+
+- Exhibit version (printed in help)
+- Output from your run of Exhibit, will all error codes
+- Versions and flavors of SQL server you are using
+- Desktop and Server OS types
+
+Mail to: github.com/r-pufky
+
+If you cannot fit all of the information into one e-mail, just shoot me 
+multiples with the information attached.  I will acknowledge your e-mail and
+work on figuring out where it went wrong.
