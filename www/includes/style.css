@@ -1,0 +1,36 @@
+.exhibitcontent {
+    font-size: 10px;
+    text-align: center;
+}
+img {
+	border: none;
+}
+img.imgsec {
+	vertical-align: -75%;
+	width: 32px;
+	height: 32px;
+}
+img.imghead {
+	vertical-align: -100%;
+	width: 48px;
+	height: 48px;
+}
+img.imgmenu {
+	vertical-align: -75%;
+	width: 32px;
+	height: 32px;
+}
+img.contentright {
+    float: left;
+    margin: 10px 10px 10px 10px;
+}
+img.contentleft {
+    float: right;
+    margin: 10px 10px 10px 10px;
+}
+img.exhibit {
+    width: 40%;
+}
+img.exhibitpermissions {
+    width: 75%;
+}
